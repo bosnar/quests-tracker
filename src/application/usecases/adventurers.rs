@@ -1,9 +1,12 @@
 use anyhow::Result;
 use std::sync::Arc;
 
-use crate::domain::{
-    repositories::adventurers::AdventurerRepository,
-    value_objects::adventurer_model::RegisterAdventurerModel,
+use crate::{
+    domain::{
+        repositories::adventurers::AdventurerRepository,
+        value_objects::adventurer_model::RegisterAdventurerModel,
+    },
+    infrastructure::argon2_hashing,
 };
 
 #[derive(Debug, Clone)]
@@ -28,6 +31,15 @@ where
         &self,
         mut register_adventurer_model: RegisterAdventurerModel,
     ) -> Result<i32> {
-        unimplemented!()
+        let hashed_password = argon2_hashing::hash(register_adventurer_model.password)?;
+
+        register_adventurer_model.password = hashed_password;
+
+        let adventurer_id = self
+            .adventurer_repository
+            .register(register_adventurer_model.to_entity())
+            .await?;
+
+        Ok(adventurer_id)
     }
 }
