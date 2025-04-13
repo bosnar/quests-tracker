@@ -7,6 +7,6 @@ use crate::domain::value_objects::quest_adventurer_junction::QuestAdventurerJunc
 #[async_trait]
 #[automock]
 pub trait CrewSwitchboardRepository {
-    async fn join(&self, junction_body: QuestAdventurerJunction) -> Result<i32>;
-    async fn leave(&self, junction_body: QuestAdventurerJunction) -> Result<i32>;
+    async fn join(&self, junction_body: QuestAdventurerJunction) -> Result<()>;
+    async fn leave(&self, junction_body: QuestAdventurerJunction) -> Result<()>;
 }
