@@ -30,7 +30,9 @@ where
         guild_commander_id: i32,
         add_quest_model: AddQuestModel,
     ) -> Result<i32> {
-        unimplemented!()
+        let add_quest_entity = add_quest_model.to_entity(guild_commander_id);
+        let quest_id = self.quest_ops_repository.add(add_quest_entity).await?;
+        Ok(quest_id)
     }
 
     pub async fn edit(
@@ -39,10 +41,18 @@ where
         guild_commander_id: i32,
         edit_quest_model: EditQuestModel,
     ) -> Result<i32> {
-        unimplemented!()
+        let edit_quest_entity = edit_quest_model.to_entity(guild_commander_id);
+        let quest_id = self
+            .quest_ops_repository
+            .edit(quest_id, edit_quest_entity)
+            .await?;
+        Ok(quest_id)
     }
 
     pub async fn remove(&self, quest_id: i32, guild_commander_id: i32) -> Result<()> {
-        unimplemented!()
+        self.quest_ops_repository
+            .remove(quest_id, guild_commander_id)
+            .await?;
+        Ok(())
     }
 }

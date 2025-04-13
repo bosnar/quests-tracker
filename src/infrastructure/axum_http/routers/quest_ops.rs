@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use axum::{
     extract::{Path, State},
+    http::StatusCode,
     middleware,
     response::IntoResponse,
     routing::{delete, patch, post},
@@ -48,7 +49,16 @@ where
     T1: QuestOpsRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-    unimplemented!()
+    match quest_ops_usecase
+        .add(guild_commander_id, add_quest_model)
+        .await
+    {
+        Ok(quest_id) => {
+            let response = format!("Quest created successfully: {}", quest_id);
+            (StatusCode::CREATED, response)
+        }
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+    }
 }
 
 pub async fn edit<T1, T2>(
@@ -61,7 +71,16 @@ where
     T1: QuestOpsRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-    unimplemented!()
+    match quest_ops_usecase
+        .edit(quest_id, guild_commander_id, edit_quest_model)
+        .await
+    {
+        Ok(quest_id) => {
+            let response = format!("Quest updated successfully: {}", quest_id);
+            (StatusCode::OK, response)
+        }
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+    }
 }
 
 pub async fn remove<T1, T2>(
@@ -73,5 +92,11 @@ where
     T1: QuestOpsRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-    unimplemented!()
+    match quest_ops_usecase.remove(quest_id, guild_commander_id).await {
+        Ok(_) => {
+            let response = format!("Remove quest successfully: {}", quest_id);
+            (StatusCode::OK, response)
+        }
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+    }
 }
