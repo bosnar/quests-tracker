@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use axum::{
     extract::{Path, State},
+    http::StatusCode,
     middleware,
     response::IntoResponse,
     routing::patch,
@@ -50,7 +51,19 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-    unimplemented!()
+    match journey_ledger_usecase
+        .in_journey(quest_id, guild_commander_id)
+        .await
+    {
+        Ok(quest_id) => (
+            StatusCode::OK,
+            format!("Quest {} is in journey", quest_id).into_response(),
+        ),
+        Err(e) => (
+            StatusCode::BAD_REQUEST,
+            format!("Error: {}", e).into_response(),
+        ),
+    }
 }
 
 pub async fn to_completed<T1, T2>(
@@ -62,7 +75,19 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-    unimplemented!()
+    match journey_ledger_usecase
+        .to_completed(quest_id, guild_commander_id)
+        .await
+    {
+        Ok(quest_id) => (
+            StatusCode::OK,
+            format!("Quest {} is in journey", quest_id).into_response(),
+        ),
+        Err(e) => (
+            StatusCode::BAD_REQUEST,
+            format!("Error: {}", e).into_response(),
+        ),
+    }
 }
 
 pub async fn to_failed<T1, T2>(
@@ -74,5 +99,17 @@ where
     T1: JourneyLedgerRepository + Send + Sync,
     T2: QuestViewingRepository + Send + Sync,
 {
-    unimplemented!()
+    match journey_ledger_usecase
+        .to_failed(quest_id, guild_commander_id)
+        .await
+    {
+        Ok(quest_id) => (
+            StatusCode::OK,
+            format!("Quest {} is failed", quest_id).into_response(),
+        ),
+        Err(e) => (
+            StatusCode::BAD_REQUEST,
+            format!("Error: {}", e).into_response(),
+        ),
+    }
 }
